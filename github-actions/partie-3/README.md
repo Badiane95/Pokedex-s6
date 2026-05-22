@@ -1,8 +1,10 @@
-# Pokédex – Devoir noté S6
+# Pokedex S6 - BUT MMI Developpement Web
 
-Projet réalisé dans le cadre du **devoir noté de S6 – Développement Web et dispositif interactif** (BUT MMI, option développement).
+> Projet realise dans le cadre du devoir note de S6 - Developpement Web et dispositif interactif (BUT MMI, option developpement).
 
-## Auteurs
+---
+
+## Membres du groupe
 
 | Pseudonyme | Profil GitHub |
 |---|---|
@@ -10,91 +12,180 @@ Projet réalisé dans le cadre du **devoir noté de S6 – Développement Web et
 | Badiane95 | [github.com/Badiane95](https://github.com/Badiane95) |
 | ShaunQ0 | [github.com/ShaunQ0](https://github.com/ShaunQ0) |
 
+---
+
 ## Mise en place du projet
 
-### Prérequis
+### Prerequis
 
-- Node.js ≥ 20
-- npm
+- Node.js >= 20
+- npm >= 9
 
 ### Installation
 
 ```bash
+git clone https://github.com/lucasl0/Pokedex-s6.git
+cd Pokedex-s6/github-actions/partie-3
 npm install
 ```
 
-### Variables d'environnement
+### Configuration de l'environnement
 
-Copier `.env.example` en `.env` et remplir les valeurs :
+Copier le fichier `.env.example` en `.env` :
 
+```bash
+cp .env.example .env
 ```
-VITE_GITHUB_TOKEN=ghp_xxx   # Token GitHub (ne pas committer)
-VITE_GITHUB_OWNER=Badiane95
+
+Template `.env` :
+
+```env
+# Token GitHub API (ne pas commiter)
+VITE_GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
+
+# Infos du depot
+VITE_GITHUB_OWNER=lucasl0
 VITE_GITHUB_REPO=Pokedex-s6
+
+# Injectes automatiquement par CI/CD
+# VITE_ACTOR=
+# VITE_BUILD_DATE=
 ```
 
-> Le fichier `.env` est dans `.gitignore` et ne doit jamais être commité.
+> Le fichier `.env` est dans le `.gitignore` - ne jamais le commiter.
 
-### Lancer en développement
+### Lancer en developpement
 
 ```bash
 npm run dev
 ```
 
-### Build
+### Build de production
 
 ```bash
 npm run build
 ```
 
-### Tests
+---
 
-```bash
-npm test          # Tests unitaires (Vitest)
-npm run e2e       # Tests end-to-end (Playwright, mode UI)
-```
+## Technologies utilisees
 
-### Lint
-
-```bash
-npm run lint
-```
-
-## Technologies
-
-| Outil | Rôle |
+| Outil | Role |
 |---|---|
-| Vite + Vituum | Build / générateur de pages statiques |
-| TailwindCSS v4 | Styles / responsive |
-| Vitest | Tests unitaires |
-| Playwright | Tests e2e |
-| GitHub Actions | CI/CD |
-| wavesurfer.js | Visualisation du cri Pokémon |
-| rsync | Déploiement SSH |
+| [Vite](https://vitejs.dev/) | Bundler et serveur de dev |
+| [TailwindCSS v4](https://tailwindcss.com/) | Styles CSS |
+| [Vitest](https://vitest.dev/) | Tests unitaires |
+| [Playwright](https://playwright.dev/) | Tests end-to-end |
+| [GitHub Actions](https://github.com/features/actions) | CI/CD |
+| [wavesurfer.js](https://wavesurfer.xyz/) | Spectre sonore du cri Pokemon |
+| rsync via SSH | Deploiement |
 
-## APIs utilisées
+---
 
-- [Tyradex](https://tyradex.vercel.app) – données Pokémon en français
-- [PokéAPI](https://pokeapi.co) – données complémentaires (évolutions, stats, cris…)
-- [TCGdex](https://tcgdex.net) – cartes Pokémon TCG
+## APIs utilisees
 
-## Schéma BDD
+| API | Usage |
+|---|---|
+| [Tyradex](https://tyradex.vercel.app/) | Donnees Pokemon en francais |
+| [PokeAPI](https://pokeapi.co/) | Donnees detaillees, cris, sprites |
+| [TCGdex](https://tcgdex.dev/) | Cartes Pokemon TCG |
+| [GitHub API](https://docs.github.com/fr/rest) | Liste des collaborateurs |
 
-Ce projet est une application front-end statique sans base de données relationnelle.  
-Les données sont récupérées depuis les APIs tierces listées ci-dessus.  
-Les jaquettes de jeux sont stockées dans `public/jaquettes/` et uploadables via `/upload.php`.
+---
 
-## Upload de jaquettes
+## Schema base de donnees
 
-Accéder à `/upload.php` pour uploader des images de jaquettes de jeux. Les images sont sauvegardées sous `{game-id}.{ext}` (ex : `red.png`, `omega-ruby.avif`).
+La base de donnees MySQL est utilisee pour stocker les jaquettes de jeux.
 
-## CI/CD
+```sql
+CREATE TABLE game_covers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    game_name VARCHAR(255) NOT NULL,
+    file_name VARCHAR(255) NOT NULL,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-Le pipeline GitHub Actions (`.github/workflows/partie-3.yml`) se déclenche sur `pull_request` vers `main` et effectue :
+### Migration
 
-1. **Lint** – ESLint
-2. **Tests unitaires** – Vitest (parallèle avec smoke tests)
-3. **Smoke tests e2e** – Playwright chromium (@smoke)
-4. **Tests e2e complets** – Playwright (après smoke)
-5. **Build** – Vite (après tests)
-6. **Deploy** – rsync via SSH (après build)
+Exporter le schema :
+
+```bash
+mysqldump -u {USER} -p{PASSWORD} --no-data --no-create-db {DATABASE} > database.sql
+```
+
+Importer :
+
+```bash
+cat > .my.cnf << EOF
+[client]
+user=$MYSQL_USER
+password=$MYSQL_PASSWORD
+database=$MYSQL_DATABASE
+host=$MYSQL_SERVER
+EOF
+
+chmod 400 .my.cnf
+mysql --defaults-extra-file=.my.cnf < database.sql
+rm .my.cnf
+```
+
+---
+
+## Pipeline CI/CD
+
+Le pipeline se declenche sur `push` ou `pull_request` vers `main`.
+
+```
+lint ──┐
+       ├──> build ──> e2e ──> deploy (main push uniquement)
+unit ──┘
+```
+
+### Secrets GitHub a configurer
+
+| Nom | Description |
+|---|---|
+| `SSH_KEY` | Cle SSH privee pour le deploiement |
+| `SSH_USER` | Utilisateur SSH du serveur |
+| `SSH_SERVER` | Adresse du serveur de production |
+| `MYSQL_USER` | Utilisateur base de donnees |
+| `MYSQL_PASSWORD` | Mot de passe base de donnees |
+| `MYSQL_SERVER` | Serveur base de donnees |
+| `MYSQL_DATABASE` | Nom de la base de donnees |
+| `VITE_GITHUB_TOKEN` | Token GitHub API (ne pas commiter) |
+
+### Variables GitHub a configurer
+
+| Nom | Valeur |
+|---|---|
+| `VITE_GITHUB_OWNER` | `lucasl0` |
+| `VITE_GITHUB_REPO` | `Pokedex-s6` |
+
+---
+
+## Tests
+
+```bash
+# Tests unitaires
+npm run test
+
+# Tests E2E
+npm run test:e2e
+```
+
+---
+
+## Securite
+
+- Les `.env` sont proteges via `.htaccess` genere automatiquement par le CI
+- Le token GitHub est injecte via les Secrets GitHub Actions, jamais commite
+- `VITE_ACTOR` et `VITE_BUILD_DATE` sont injectes par CI pour afficher le dernier deployeur
+
+---
+
+## Credits
+
+- APIs : [Tyradex](https://tyradex.vercel.app/), [PokeAPI](https://pokeapi.co/), [TCGdex](https://tcgdex.dev/)
+- Icones types : [pokemon-type-icons](https://github.com/duiker101/pokemon-type-icons)
+- Logo : BUT MMI - Annee universitaire 2024-2025
