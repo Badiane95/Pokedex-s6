@@ -657,3 +657,14 @@ details {
     top: 50%;
     transform: translateY(-50%);
 }
+
+/* Types shown in list mode only via CSS container queries (no JS) */
+.pokemon-types {
+    display: none;
+}
+
+@container pokemon (min-width: 20rem) {
+    .pokemon-types {
+        display: flex;
+    }
+}
