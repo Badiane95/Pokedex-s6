@@ -460,7 +460,7 @@ if (deployInfo) {
     const actor = import.meta.env.VITE_ACTOR;
     const buildDate = import.meta.env.VITE_BUILD_DATE;
     if (actor && buildDate) {
-        deployInfo.textContent = `Déployé par ${actor} le ${new Date(buildDate).toLocaleString("fr-FR")}`;
+        deployInfo.textContent = `Déployé par ${actor} — build #${buildDate}`;
     }
 }
 

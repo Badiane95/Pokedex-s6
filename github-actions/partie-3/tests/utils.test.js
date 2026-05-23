@@ -4,7 +4,7 @@ import { getVersionForName } from "../src/utils/pokemon-mapping.js";
 
 describe("cleanString", () => {
     it("supprime les accents", () => {
-        expect(cleanString("Pokémon")).toBe("Pokemon");
+        expect(cleanString("Pokémon")).toBe("pokemon");
     });
 
     it("passe en minuscules", () => {
