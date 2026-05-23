@@ -50,7 +50,7 @@ const generationShortcut = document.querySelector("[data-generation-shortcut]");
 let isGridLayout = localStorage.getItem("is_grid_layout") ? JSON.parse(localStorage.getItem("is_grid_layout")) === true : true;
 const initialPageTitle = document.title;
 
-modal.dataset.isGridLayout = isGridLayout;
+if (modal) modal.dataset.isGridLayout = isGridLayout;
 
 export const listPokemon = [];
 
@@ -378,7 +378,7 @@ delegateEventHandler(document, "change", "[data-layout-switch]", (e) => {
     updatePokedexLayout(e.target.checked);
     updateSwitchIcons(e.target.checked);
     isGridLayout = e.target.checked;
-    modal.dataset.isGridLayout = e.target.checked;
+    if (modal) modal.dataset.isGridLayout = e.target.checked;
 
     if(window.scrollY !== 0) {
         firstVisiblePkmn.scrollIntoView({
@@ -417,14 +417,14 @@ const loadGithubMembers = async () => {
         const headers = GITHUB_TOKEN ? { Authorization: `Bearer ${GITHUB_TOKEN}` } : {};
         const res = await fetch(
             `https://api.github.com/repos/${GITHUB_REPO_OWNER}/${GITHUB_REPO_NAME}/contributors`,
-            { headers }
+            { headers, signal: AbortSignal.timeout(5000) }
         );
         if (!res.ok) throw new Error("contributors fetch failed");
 
         const collaborators = await res.json();
         const userDetails = await Promise.all(
             collaborators.map((c) =>
-                fetch(`https://api.github.com/users/${c.login}`, { headers }).then((r) => r.json())
+                fetch(`https://api.github.com/users/${c.login}`, { headers, signal: AbortSignal.timeout(5000) }).then((r) => r.json())
             )
         );
 

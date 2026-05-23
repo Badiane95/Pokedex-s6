@@ -40,6 +40,7 @@ export default defineConfig({
         },
     },
     test: {
+        forceExit: true,
         exclude: [
             "**/node_modules/**",
             "**/dist/**",
