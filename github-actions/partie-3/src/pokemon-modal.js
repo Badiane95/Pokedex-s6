@@ -138,7 +138,9 @@ let listTypes = rawTypes.map((item) => ({
 
 export { listTypes }
 
-const initialModalSpeed = window.getComputedStyle(document.querySelector("dialog")).getPropertyValue("--animation-speed");
+const initialModalSpeed = document.querySelector("dialog")
+    ? window.getComputedStyle(document.querySelector("dialog")).getPropertyValue("--animation-speed")
+    : "";
 
 const resetModalPosition = () => {
     const modalOriginalBackdropBlur = parseInt(window.getComputedStyle(modal).getPropertyValue("--details-modal-blur"));
