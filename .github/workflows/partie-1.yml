@@ -1,4 +1,4 @@
-name: Partie 1 - Découverte GitHub Actions
+name: Partie 1 - Decouverte GitHub Actions
 
 on:
   push:
@@ -13,13 +13,17 @@ jobs:
     name: My first job
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Say hello to me
-        run: printf "Hello ${{ github.actor }} ! 🥳"
+        run: printf "Hello ${{ github.actor }} !"
 
       - name: List files in the repository
-        run: | # Le pipe (|) permet d'écrire du texte multilignes
+        # Le pipe (|) permet d'ecrire du texte multilignes
+        run: |
           ls ${{ github.workspace }}
 
-      - name: Ma commande Linux personnalisée
+      - name: Ma commande Linux personnalisee
         run: |
           echo "Date et heure actuelle : $(date)"
