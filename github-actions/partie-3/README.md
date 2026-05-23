@@ -77,11 +77,11 @@ mysql -u {USER} -p{PASSWORD} -h {SERVER} {DATABASE} < database.sql
 ## 🛠️ Scripts disponibles
 
 ```bash
-npm run dev          # Serveur de développement (Vite)
-npm run build        # Build de production
-npm run lint         # Linter ESLint
-npm run test:unit    # Tests unitaires (Vitest)
-npm run test:e2e     # Tests end-to-end (Playwright)
+npm run dev      # Serveur de développement (Vite)
+npm run build    # Build de production
+npm run lint     # Linter ESLint
+npm run test     # Tests unitaires (Vitest)
+npm run e2e      # Tests end-to-end (Playwright)
 ```
 
 ## 🔑 Secrets GitHub Actions
