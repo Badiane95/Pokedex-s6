@@ -50,5 +50,9 @@ export default defineConfig({
         ],
         environment: 'happy-dom',
         css: false,
+        reporters: ['verbose', 'html'],
+        outputFile: {
+            html: './vitest-report/index.html'
+        },
     },
 });

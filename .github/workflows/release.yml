@@ -1,0 +1,139 @@
+name: Release & Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Lint ESLint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: github-actions/partie-3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: github-actions/partie-3/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+
+  unit-tests:
+    name: Tests unitaires (Vitest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: github-actions/partie-3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: github-actions/partie-3/package-lock.json
+      - run: npm ci
+      - run: npm run test:unit -- --reporter=verbose --reporter=html --outputFile.html=./vitest-report/index.html
+      - name: Upload rapport Vitest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitest-report
+          path: github-actions/partie-3/vitest-report/
+          retention-days: 7
+
+  e2e-tests:
+    name: Tests e2e (Playwright)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: github-actions/partie-3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: github-actions/partie-3/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npm run test:e2e
+      - name: Upload rapport Playwright (si echec)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: github-actions/partie-3/playwright-report/
+          retention-days: 7
+
+  deploy:
+    name: Déploiement production
+    needs: [lint, unit-tests, e2e-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: github-actions/partie-3
+    env:
+      SECRETS_CONTEXT: ${{ toJson(secrets) }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: github-actions/partie-3/package-lock.json
+      - run: npm ci
+      - name: Générer .env
+        run: |
+          echo "VITE_GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" > .env
+      - name: Créer .htaccess pour protéger .env
+        run: |
+          cat > .htaccess << 'EOF'
+          <FilesMatch "^\.env">
+            Order allow,deny
+            Deny from all
+          </FilesMatch>
+          EOF
+      - run: npm run build
+      - name: Déployer via rsync SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_SERVER }} >> ~/.ssh/known_hosts
+          rsync -avz --delete dist/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_SERVER }}:/var/www/html/
+      - name: Migration base de données
+        run: |
+          MYSQL_USER=$(echo $SECRETS_CONTEXT | jq -r '.MYSQL_USER')
+          MYSQL_PASSWORD=$(echo $SECRETS_CONTEXT | jq -r '.MYSQL_PASSWORD')
+          MYSQL_SERVER=$(echo $SECRETS_CONTEXT | jq -r '.MYSQL_SERVER')
+          MYSQL_DATABASE=$(echo $SECRETS_CONTEXT | jq -r '.MYSQL_DATABASE')
+          cat > .my.cnf << EOF
+          [client]
+          user=$MYSQL_USER
+          password=$MYSQL_PASSWORD
+          database=$MYSQL_DATABASE
+          host=$MYSQL_SERVER
+          EOF
+          chmod 400 .my.cnf
+          if [ -f database.sql ]; then
+            mysql --defaults-extra-file=.my.cnf < database.sql
+          fi
+      - name: Afficher le dernier déployeur
+        run: |
+          echo "✅ Déployé par : ${{ github.actor }} le $(date +'%d/%m/%Y à %H:%M:%S')"
