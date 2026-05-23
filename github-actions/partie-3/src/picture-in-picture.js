@@ -73,7 +73,7 @@ if ("documentPictureInPicture" in window) {
         }
     };
 
-    modal_DOM.listTogglePip.forEach((item) => {
+    modal_DOM.listTogglePip?.forEach((item) => {
         item.addEventListener("click", () => {
             togglePictureInPicture();
         });
@@ -99,7 +99,7 @@ if ("documentPictureInPicture" in window) {
         pipObserver.observe(pipWindow.document.body, config);
     });
 } else {
-    modal_DOM.listTogglePip.forEach((item) => {
+    modal_DOM.listTogglePip?.forEach((item) => {
         item.remove();
     });
 }
