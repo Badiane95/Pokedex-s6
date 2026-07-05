@@ -153,7 +153,7 @@ mysql --defaults-extra-file=.my.cnf < database.sql
 
 ## 📡 APIs utilisées
 
-- [Tyradex]((https://tyradex.app/))
+- [Tyradex](https://tyradex.app/)
 - [PokéAPI](https://pokeapi.co/)
 - [TCGdex](https://tcgdex.dev/)
 
