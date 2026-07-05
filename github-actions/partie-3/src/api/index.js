@@ -3,23 +3,15 @@ import "./utils";
 export * from "./pokeapi";
 export * from "./tyradex";
 
+import { fetchTCGCards as fetchTCGCardsByName } from "./tcgdex.js";
+
 const tcgCache = {};
 
-export const fetchTCGCards = async (pkmnId) => {
-    if (tcgCache[pkmnId] !== undefined) return tcgCache[pkmnId];
+export const fetchTCGCards = async (pokemonNameOrId) => {
+    const cacheKey = String(pokemonNameOrId);
+    if (tcgCache[cacheKey] !== undefined) return tcgCache[cacheKey];
 
-    try {
-        const res = await fetch(`https://api.tcgdex.net/v2/fr/cards?pokedexNumber=${pkmnId}`);
-        if (!res.ok) {
-            tcgCache[pkmnId] = [];
-            return [];
-        }
-
-        const data = await res.json();
-        tcgCache[pkmnId] = Array.isArray(data) ? data : (data.cards || []);
-        return tcgCache[pkmnId];
-    } catch (_e) {
-        tcgCache[pkmnId] = [];
-        return [];
-    }
+    const cards = await fetchTCGCardsByName(pokemonNameOrId);
+    tcgCache[cacheKey] = cards;
+    return cards;
 };

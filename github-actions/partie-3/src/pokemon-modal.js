@@ -946,7 +946,7 @@ displayModal = async (pkmnData) => {
 
     if (newModalDom.listTcgCards && newModalDom.tcgDetails) {
         clearTagContent(newModalDom.listTcgCards);
-        const tcgCards = await fetchTCGCards(pkmnData.pokedex_id);
+        const tcgCards = await fetchTCGCards(pkmnData.name.en);
         newModalDom.nbTcgCards.textContent = tcgCards.length ? ` (${tcgCards.length})` : "";
         newModalDom.tcgDetails.inert = tcgCards.length === 0;
 
