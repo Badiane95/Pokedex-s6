@@ -8,6 +8,7 @@ Projet réalisé dans le cadre du **devoir noté de S6 – Développement Web et
 
 ---
 
+
 ## 📋 Rendus attendus
 
 - Lien du projet sur GitHub *(un seul rendu par groupe)*
@@ -152,7 +153,7 @@ mysql --defaults-extra-file=.my.cnf < database.sql
 
 ## 📡 APIs utilisées
 
-- [Tyradex](https://tyradex.vercel.app/)
+- [Tyradex]((https://tyradex.app/))
 - [PokéAPI](https://pokeapi.co/)
 - [TCGdex](https://tcgdex.dev/)
 
@@ -178,6 +179,10 @@ mysql --defaults-extra-file=.my.cnf < database.sql
 ## 👥 Auteurs
 
 Projet réalisé par le groupe – BUT MMI S6, option développement
+
+Site déployé : https://badiane95.github.io/Pokedex-s6/
+
+Dépôt GitHub : https://github.com/Badiane95/Pokedex-s6.git
 
 | Pseudonyme | Profil GitHub |
 |---|---|
