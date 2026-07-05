@@ -195,6 +195,16 @@ const loadPokedexForGeneration = async (generation = 1, triggerElement) => {
     try {
         listLoadGenerationBtns.forEach((item) => item.inert = true);
         const pokedexData = await fetchPokemonForGeneration(generation);
+        if (!pokedexData || pokedexData.length === 0) {
+            listLoadGenerationBtns.forEach((item) => item.inert = false);
+            errorMessageContainer.textContent = "Les données Pokémon sont temporairement indisponibles. Veuillez réessayer dans quelques instants.";
+            errorPopover.dataset.error = POPOVER_ERRORS.lost_connection;
+            errorPopover.showPopover();
+            if (triggerElement) {
+                triggerElement.parentNode.parentNode.removeChild(triggerElement.parentNode)
+            }
+            return;
+        }
         const cloneDex = document.importNode(pkdexTemplateRaw.content, true);
 
         const pokedex = cloneDex.querySelector("[data-pokedex]");

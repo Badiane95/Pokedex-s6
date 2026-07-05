@@ -5,24 +5,21 @@ const api = axios.create({
 });
 
 export const fetchPokemonForGeneration = async (generation = 1) => {
-    let listPokemon = [];
     try {
         const req = await api.get(`/v1/gen/${generation}`);
-        listPokemon = req.data;
-
         const serverErrorStartNumber = 400;
         if (req.data?.status >= serverErrorStartNumber) {
-            throw new Error("", { cause: req.data });
+            return [];
         }
-
-        return listPokemon;
+        return req.data;
     } catch (error) {
         // 402 Payment Required : API Tyradex indisponible (payante)
         const httpStatus = error?.response?.status ?? error?.cause?.status;
         if (httpStatus === 402) {
             throw new Error("API unavailable", { cause: { status: 402, apiUnavailable: true } });
         }
-        throw new Error("", { cause: error?.cause });
+        console.error('Erreur fetchPokemonForGeneration:', error);
+        return [];
     }
 };
 
@@ -33,7 +30,8 @@ export const fetchPokemon = async (pkmnId, region = null) => {
 
         return req.data;
     } catch (error) {
-        throw new Error(error);
+        console.error('Erreur fetchPokemon:', error);
+        return null;
     }
 };
 
@@ -43,6 +41,7 @@ export const fetchAllTypes = async () => {
 
         return req.data;
     } catch (error) {
-        throw new Error(error);
+        console.error('Erreur fetchAllTypes:', error);
+        return [];
     }
 };

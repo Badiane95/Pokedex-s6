@@ -33,7 +33,7 @@ export default defineConfig({
         open: true,
         proxy: {
             "/api": {
-                target: "https://tyradex.app",
+                target: "https://tyradex.vercel.app",
                 changeOrigin: true,
                 secure: true,
             },

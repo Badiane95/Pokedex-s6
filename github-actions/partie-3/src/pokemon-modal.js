@@ -128,6 +128,9 @@ try {
 } catch {
     rawTypes = FALLBACK_TYPES;
 }
+if (!rawTypes || rawTypes.length === 0) {
+    rawTypes = FALLBACK_TYPES;
+}
 let listTypes = rawTypes.map((item) => ({
     sprite: item.sprites,
     name: {
