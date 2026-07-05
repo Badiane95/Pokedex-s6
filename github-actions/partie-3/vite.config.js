@@ -3,7 +3,7 @@ import vituum from "vituum";
 import eslint from "vite-plugin-eslint";
 
 export default defineConfig({
-    base: "./",
+    base: "/Pokedex-s6/",
     plugins: [
         vituum({
             pages: {

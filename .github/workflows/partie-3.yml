@@ -156,7 +156,36 @@ jobs:
           path: github-actions/partie-3/dist
 
   # ─────────────────────────────────────────
-  # JOB 5 : Deploy
+  # JOB 5 : Deploy to GitHub Pages
+  # ─────────────────────────────────────────
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [build]
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@master
+        with:
+          name: bundle
+          path: ./dist
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # ─────────────────────────────────────────
+  # JOB 6 : Deploy via SSH (rsync)
   # ─────────────────────────────────────────
   deploy:
     name: Deploy via SSH (rsync)
