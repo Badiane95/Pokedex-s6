@@ -150,6 +150,14 @@ const resetModalPosition = () => {
     modal.style.opacity = 1;
 }
 
+const setEvolutionSprite = (img, pokedexId) => {
+    const homeUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokedexId}.png`;
+    img.src = homeUrl;
+    img.onerror = () => {
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokedexId}.png`;
+    };
+};
+
 modal.addEventListener("close", async (e) => {
     const url = new URL(location);
     if (
@@ -523,7 +531,7 @@ displayModal = async (pkmnData) => {
                 const img = clone.querySelector("img");
                 img.alt = `Sprite de ${item.name}`;
                 img.classList.replace("w-52", "w-36");
-                replaceImage(img, `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${item.pokedex_id}.png`);
+                setEvolutionSprite(img, item.pokedex_id);
 
                 const evolutionName = clone.querySelector("p");
                 evolutionName.textContent = `#${String(item.pokedex_id).padStart(NB_NUMBER_INTEGERS_PKMN_ID, '0')} ${item.name}`;
