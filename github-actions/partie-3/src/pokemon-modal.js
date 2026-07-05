@@ -812,7 +812,7 @@ displayModal = async (pkmnData) => {
         let extIdx = 0;
         const tryNextExt = () => {
             if (extIdx < extensions.length) {
-                img.src = `/jaquettes/${item.version.name}.${extensions[extIdx++]}`;
+                img.src = `${import.meta.env.BASE_URL}jaquettes/${item.version.name}.${extensions[extIdx++]}`;
                 img.onerror = tryNextExt;
             } else {
                 img.hidden = true;

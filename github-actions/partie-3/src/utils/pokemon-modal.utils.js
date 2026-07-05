@@ -20,7 +20,7 @@ export const createSensibility = async (template, data, listTypes) => {
 
     const typeIconContainer = template.querySelector("[data-type-icon]");
     typeIconContainer.style.backgroundColor = window.getComputedStyle(document.body).getPropertyValue(`--type-${cleanString(typeData.name.fr)}`);
-    const svgTypeIconReq = await fetch(`/images/types-icons/${typeData.name.en}.svg`);
+    const svgTypeIconReq = await fetch(`${import.meta.env.BASE_URL}images/types-icons/${typeData.name.en}.svg`);
 
     const parser = new DOMParser();
     const svgTypeIcon = parser.parseFromString(
