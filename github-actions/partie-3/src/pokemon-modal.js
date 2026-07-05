@@ -810,13 +810,13 @@ displayModal = async (pkmnData) => {
         img.className = "w-10 h-10 object-contain rounded shrink-0";
         const extensions = ["png", "jpg", "avif", "webp"];
         let extIdx = 0;
-        const tryNextExt = () => {
-            if (extIdx < extensions.length) {
-                img.src = `${import.meta.env.BASE_URL}jaquettes/${item.version.name}.${extensions[extIdx++]}`;
-                img.onerror = tryNextExt;
-            } else {
-                img.hidden = true;
-            }
+        const tryNextExt = async () => {
+            if (extIdx >= extensions.length) { img.hidden = true; return; }
+            const url = `${import.meta.env.BASE_URL}jaquettes/${item.version.name}.${extensions[extIdx++]}`;
+            try {
+                const head = await fetch(url, { method: "HEAD" });
+                if (head.ok) { img.src = url; } else { tryNextExt(); }
+            } catch { tryNextExt(); }
         };
         tryNextExt();
 
