@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE = "https://tyradex.vercel.app";
+const API_BASE = "https://tyradex.app";
 
 export const fetchPokemonForGeneration = async (generation = 1) => {
     let listPokemon = [];
