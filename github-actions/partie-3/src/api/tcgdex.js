@@ -4,7 +4,7 @@ const tcgCache = {};
 
 /**
  * Récupère les cartes TCG d'un Pokémon avec cache
- * @param {string} pokemonName - nom EN du Pokémon
+ * @param {string} pokemonName - nom FR du Pokémon
  * @returns {Promise<Array>}
  */
 export const fetchTCGCards = async (pokemonName) => {
@@ -16,7 +16,7 @@ export const fetchTCGCards = async (pokemonName) => {
 
     try {
         const res = await fetch(
-            `${TCG_BASE_URL}/cards?name=${encodeURIComponent(pokemonName)}&pagination[page]=1&pagination[itemsPerPage]=20`
+            `${TCG_BASE_URL}/cards?name=${encodeURIComponent(pokemonName)}`
         );
         if (!res.ok) {
             tcgCache[key] = [];
