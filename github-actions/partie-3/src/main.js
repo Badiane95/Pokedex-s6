@@ -25,7 +25,7 @@ import "#src/window-events.js";
 
 import "#src/styles/main.css";
 
-const GITHUB_REPO_OWNER = import.meta.env.VITE_GITHUB_OWNER || "lucasl0";
+const GITHUB_REPO_OWNER = import.meta.env.VITE_GITHUB_OWNER || "Badiane95";
 const GITHUB_REPO_NAME = import.meta.env.VITE_GITHUB_REPO || "Pokedex-s6";
 
 if ('paintWorklet' in CSS) {
