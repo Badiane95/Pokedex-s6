@@ -1,10 +1,9 @@
+import { fetchTCGCards } from "../api/tcgdex.js";
+
 /**
  * tcg-wavesurfer-snippet.js
  * Blocs à intégrer dans displayModal() de pokemon-modal.js
  * ─────────────────────────────────────────────────────────
- * IMPORT à ajouter en haut de pokemon-modal.js :
- *   import { fetchTCGCards } from "./api/tcgdex.js";
- *
  * Ces deux blocs doivent être collés dans displayModal(),
  * APRÈS le bloc qui gère listGamesEl.
  */
